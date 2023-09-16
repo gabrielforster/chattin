@@ -1,0 +1,10 @@
+{
+  "name": "kafka-websocket-chat-app",
+  "version": "0.0.0",
+  "author": "gabrielforster",
+  "license": "MIT",
+  "scripts": {
+    "dev:notification": "cd microservices/notification && npm run dev",
+    "dev:messages": "cd microservices/messages && npm run dev",
+  },
+}
