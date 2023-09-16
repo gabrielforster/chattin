@@ -18,6 +18,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "kafka-node": "^5.0.0",
     "ws": "^8.13.0"
   }
 }
