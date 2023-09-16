@@ -1,0 +1,26 @@
+{
+  "name": "ms-message",
+  "version": "0.0.1",
+  "description": "Messages microservice",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node src/index.ts"
+  },
+  "author": "gabrielforster",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "kafka-node": "^5.0.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.6.2",
+    "@types/uuid": "^9.0.4",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
+    "eslint": "^8.48.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
