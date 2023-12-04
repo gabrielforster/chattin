@@ -6,9 +6,12 @@ import (
   "flag"
   "log"
   "net"
+  "net/http"
 
+  "github.com/labstack/echo/v4"
   "google.golang.org/grpc"
   pb "auth/proto"
+  database "auth/database"
 )
 
 type server struct {
@@ -16,10 +19,15 @@ type server struct {
   pb.UnimplementedSessionDataServiceServer
 }
 
+type RegisterResponse struct {
+  Username string `json:"username"`
+  Email string `json:"email"`
+  Path string `json:"path"`
+}
+
 const(
-  defaultToken = "thisisthetoken"
-  defaultUsername = "gabriel"
   PORT = 50001
+  HTTP_PORT = 50002
 )
 
 var (
@@ -49,6 +57,14 @@ func (s *server) GetSessionData (ctx context.Context, in *pb.GetSessionDataReque
 
 func main () {
   flag.Parse()
+  
+  // creating database connection
+  _, err := database.NewDatabase()
+  if err != nil {
+    log.Fatalf("could not connect to database: %v", err)
+  }
+
+  // init gRPC server 
   listenner, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
   if err != nil {
     log.Fatalf("failed to listen: %v", err)
@@ -59,8 +75,34 @@ func main () {
   pb.RegisterLoginServiceServer(s, &server{})
   pb.RegisterSessionDataServiceServer(s, &server{})
 
-  log.Printf("Starting server on port %d", listenner.Addr())
+  e := echo.New()
+
+  e.GET("/register", func(c echo.Context) error {
+    return c.JSON(http.StatusOK, &RegisterResponse{
+      Username: "gabriel",
+      Email: "rochafrgabriel@gmail.com",
+      Path: "/profile/gabriel",
+    })
+  })
+
+  // e.GET("/profile/:username", func(c echo.Context) error {
+  //   username := c.Param("username")
+  //   return c.JSON(http.StatusOK, &profileResponse{
+  //     Username: username,
+  //   })
+  // })
+
+  go func () {
+    if err := e.Start(fmt.Sprintf(":%d", HTTP_PORT)); err != nil {
+      e.Logger.Info("could not listen, shutting down the server")
+    } else {
+      e.Logger.Info("starting the server")
+    }
+  } ()
+
+  log.Printf("Starting gRPC server on port %d", listenner.Addr())
   if err := s.Serve(listenner); err != nil {
     log.Fatalf("failed to serve: %v", err)
   }
 }
+
